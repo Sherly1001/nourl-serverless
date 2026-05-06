@@ -1,11 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
-Parameters:
-  MongoUrl:
-    Type: AWS::SSM::Parameter::Value<String>
-    Default: /nourl/mongo-url
-
 Globals:
   Function:
     Timeout: 30
@@ -25,7 +20,7 @@ Resources:
       Handler: dist/lambda.handler
       Environment:
         Variables:
-          MONGO_URL: !Ref MongoUrl
+          MONGO_URL: "{{resolve:ssm:/nourl/mongo-url}}"
           NOTFOUND_FALLBACK_URL: "https://nourl.space"
           CORS_ORIGIN: "https://nourl.space"
       Events:
