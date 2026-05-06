@@ -8,9 +8,12 @@ Parameters:
     AllowedValues:
       - "true"
       - "false"
+  DomainName:
+    Type: String
+    Default: "nourl.space"
   CorsOrigin:
     Type: String
-    Default: "https://nourl.space"
+    Default: ""
   NotFoundFallbackUrl:
     Type: String
     Default: ""
@@ -42,7 +45,10 @@ Resources:
         Variables:
           MONGO_URL: !Sub "{{resolve:ssm:${MongoUrlSsmPath}}}"
           NOTFOUND_FALLBACK_URL: !Ref NotFoundFallbackUrl
-          CORS_ORIGIN: !Ref CorsOrigin
+          CORS_ORIGIN: !If
+            - IsProdCondition
+            - !Sub "https://${DomainName}"
+            - !Ref CorsOrigin
       Events:
         RootGet:
           Type: HttpApi
@@ -63,14 +69,14 @@ Resources:
     Type: AWS::CertificateManager::Certificate
     Condition: IsProdCondition
     Properties:
-      DomainName: nourl.space
+      DomainName: !Ref DomainName
       ValidationMethod: DNS
 
   ApiGatewayDomainName:
     Type: AWS::ApiGatewayV2::DomainName
     Condition: IsProdCondition
     Properties:
-      DomainName: nourl.space
+      DomainName: !Ref DomainName
       DomainNameConfigurations:
         - CertificateArn: !Ref Certificate
           EndpointType: REGIONAL
@@ -87,5 +93,5 @@ Resources:
 Outputs:
   ApiGatewayDomainTarget:
     Condition: IsProdCondition
-    Description: Add as Cloudflare CNAME target for nourl.space (orange cloud)
+    Description: !Sub "Add as Cloudflare CNAME target for ${DomainName} (orange cloud)"
     Value: !GetAtt ApiGatewayDomainName.RegionalDomainName
