@@ -1,0 +1,72 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  MongoUrl:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /nourl/mongo-url
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512
+    Runtime: nodejs24.x
+
+Resources:
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: $default
+
+  NoUrlFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Handler: dist/lambda.handler
+      Environment:
+        Variables:
+          MONGO_URL: !Ref MongoUrl
+          NOTFOUND_FALLBACK_URL: "https://nourl.space"
+          CORS_ORIGIN: "https://nourl.space"
+      Events:
+        RootGet:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /
+            Method: GET
+        ProxyAny:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /{proxy+}
+            Method: ANY
+    Metadata:
+      BuildMethod: makefile
+
+  Certificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: nourl.space
+      ValidationMethod: DNS
+
+  ApiGatewayDomainName:
+    Type: AWS::ApiGatewayV2::DomainName
+    Properties:
+      DomainName: nourl.space
+      DomainNameConfigurations:
+        - CertificateArn: !Ref Certificate
+          EndpointType: REGIONAL
+
+  ApiMapping:
+    Type: AWS::ApiGatewayV2::ApiMapping
+    DependsOn: HttpApiApiGatewayDefaultStage
+    Properties:
+      ApiId: !Ref HttpApi
+      DomainName: !Ref ApiGatewayDomainName
+      Stage: $default
+
+Outputs:
+  ApiGatewayDomainTarget:
+    Description: Add as Cloudflare CNAME target for nourl.space (orange cloud)
+    Value: !GetAtt ApiGatewayDomainName.RegionalDomainName
