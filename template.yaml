@@ -41,7 +41,10 @@ Resources:
       Environment:
         Variables:
           MONGO_URL: !Sub "{{resolve:ssm:${MongoUrlSsmPath}}}"
-          NOTFOUND_FALLBACK_URL: !Ref NotFoundFallbackUrl
+          NOTFOUND_FALLBACK_URL: !If
+            - IsProdCondition
+            - !Ref NotFoundFallbackUrl
+            - !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com"
           CORS_ORIGIN: !Ref CorsOrigin
       Events:
         RootGet:
