@@ -26,7 +26,7 @@ export default function App() {
   const keyboardTracking = useRef("");
   const [showAdvanceActions, setShowAdvanceActions] = useState(false);
 
-  const CODE = "";
+  const CODE = import.meta.env.VITE_ADMIN_CODE ?? "";
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {

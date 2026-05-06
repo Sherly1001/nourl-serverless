@@ -13,6 +13,8 @@ URL shortener on AWS Lambda + API Gateway. Custom domain `nourl.space` via Cloud
 ```sh
 cp .env.example .env
 # fill in MONGO_URL
+cp front/.env.example front/.env
+# fill in VITE_ADMIN_CODE to enable admin tab
 
 yarn install
 cd front && yarn install && yarn build && cd ..
@@ -99,4 +101,4 @@ MongoDB Atlas
 
 ## Admin UI
 
-Type `` on the keyboard (keys pressed on `document.body`) to reveal the List tab.
+Set `VITE_ADMIN_CODE` in your `.env`, then type that value on the keyboard (keys pressed on `document.body`) to reveal the List tab.
