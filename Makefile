@@ -1,5 +1,4 @@
 build-NoUrlFunction:
-	yarn build
 	cp -r dist $(ARTIFACTS_DIR)/
 	mkdir -p $(ARTIFACTS_DIR)/front
 	cp -r front/dist $(ARTIFACTS_DIR)/front/
