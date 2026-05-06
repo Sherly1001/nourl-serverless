@@ -20,6 +20,7 @@ yarn dev        # backend on :9669, serves front/dist/
 ```
 
 Frontend hot-reload:
+
 ```sh
 cd front && yarn dev   # Vite dev server on :5173
 ```
@@ -50,10 +51,10 @@ sam deploy --guided
 
 ### Cloudflare DNS setup (post-deploy)
 
-| Step | Type | Name | Target | Proxy |
-|------|------|------|--------|-------|
-| Cert validation | CNAME | `_<hash>` | value from ACM console | Off (gray) |
-| Live traffic | CNAME | `@` | `ApiGatewayDomainTarget` output from SAM | On (orange) |
+| Step            | Type  | Name      | Target                                   | Proxy       |
+| --------------- | ----- | --------- | ---------------------------------------- | ----------- |
+| Cert validation | CNAME | `_<hash>` | value from ACM console                   | Off (gray)  |
+| Live traffic    | CNAME | `@`       | `ApiGatewayDomainTarget` output from SAM | On (orange) |
 
 Cloudflare SSL mode: **Full (Strict)**
 
@@ -87,12 +88,12 @@ MongoDB Atlas
 
 ## Env Vars (Lambda / .env)
 
-| Variable | Required | Default |
-|----------|----------|---------|
-| `MONGO_URL` | yes | — |
-| `NOTFOUND_FALLBACK_URL` | no | `https://google.com` |
-| `CORS_ORIGIN` | no | `*` |
-| `PORT` | no (local only) | `9669` |
+| Variable                | Required        | Default              |
+| ----------------------- | --------------- | -------------------- |
+| `MONGO_URL`             | yes             | —                    |
+| `NOTFOUND_FALLBACK_URL` | no              | `https://google.com` |
+| `CORS_ORIGIN`           | no              | `*`                  |
+| `PORT`                  | no (local only) | `9669`               |
 
 `MONGO_URL` in production is fetched from SSM Parameter Store (`/nourl/mongo-url`).
 
