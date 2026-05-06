@@ -3,6 +3,7 @@ import {
   Button,
   Flex,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input,
   Link,
@@ -28,6 +29,13 @@ export default function AddUrlForm() {
 
   const shortUrl = useMemo(() => `${window.location.origin}/${code}`, [code]);
 
+  const codeError = useMemo(() => {
+    if (!code) return "";
+    if (/[^a-zA-Z0-9\-_ ]/.test(code))
+      return "Code may only contain letters, numbers, spaces, - and _";
+    return "";
+  }, [code]);
+
   const codeRef: MutableRefObject<HTMLInputElement | null> = useRef(null);
 
   const onSubmit = useCallback(
@@ -42,6 +50,8 @@ export default function AddUrlForm() {
           codeRef.current?.focus();
         }, 100);
       }
+
+      if (codeError) return;
 
       addUrl(code, url)
         .then((_res) => {
@@ -65,7 +75,7 @@ export default function AddUrlForm() {
           });
         });
     },
-    [code, url, created, codeRef],
+    [code, url, created, codeRef, codeError],
   );
 
   return (
@@ -81,18 +91,19 @@ export default function AddUrlForm() {
         <Text fontSize="4xl" align="center">
           Create new shorted url
         </Text>
-        <FormControl>
+        <FormControl isInvalid={!!codeError}>
           <FormLabel>
             <Text>Code</Text>
           </FormLabel>
           <Input
-            type="code"
+            type="text"
             required
             ref={codeRef}
             disabled={created}
             value={code}
             onChange={(e) => setCode(e.target.value)}
           />
+          {codeError && <FormErrorMessage>{codeError}</FormErrorMessage>}
           {created && (
             <FormLabel>
               <Link href={shortUrl} target="_blank">
