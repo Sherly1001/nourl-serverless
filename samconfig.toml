@@ -11,3 +11,16 @@ image_repositories = []
 
 [default.global.parameters]
 region = "ap-northeast-1"
+
+[dev.deploy.parameters]
+stack_name = "nourl-dev"
+region = "ap-northeast-1"
+capabilities = "CAPABILITY_IAM"
+resolve_s3 = true
+s3_prefix = "nourl-dev"
+confirm_changeset = false
+parameter_overrides = "IsProd=false CorsOrigin=* NotFoundFallbackUrl=https://google.com MongoUrlSsmPath=/nourl-dev/mongo-url"
+image_repositories = []
+
+[dev.global.parameters]
+region = "ap-northeast-1"
