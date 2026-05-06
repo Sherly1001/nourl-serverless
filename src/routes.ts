@@ -103,7 +103,9 @@ async function routes(
 
   fastify.get<GetSchema>("/:code", async function (req, res) {
     const url = await urls?.findOne({ code: req.params.code });
-    res.redirect(url?.url ?? NOTFOUND_FALLBACK_URL);
+    res.redirect(
+      url?.url || NOTFOUND_FALLBACK_URL || `https://${req.hostname}`,
+    );
   });
 
   fastify.post<PostSchema>("/", bodyCodeSchema, function (req, res) {

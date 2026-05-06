@@ -13,7 +13,7 @@ Parameters:
     Default: "https://nourl.space"
   NotFoundFallbackUrl:
     Type: String
-    Default: "https://nourl.space"
+    Default: ""
   MongoUrlSsmPath:
     Type: String
     Default: "/nourl/mongo-url"
@@ -41,10 +41,7 @@ Resources:
       Environment:
         Variables:
           MONGO_URL: !Sub "{{resolve:ssm:${MongoUrlSsmPath}}}"
-          NOTFOUND_FALLBACK_URL: !If
-            - IsProdCondition
-            - !Ref NotFoundFallbackUrl
-            - !Sub "https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com"
+          NOTFOUND_FALLBACK_URL: !Ref NotFoundFallbackUrl
           CORS_ORIGIN: !Ref CorsOrigin
       Events:
         RootGet:
