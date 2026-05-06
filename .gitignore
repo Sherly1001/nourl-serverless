@@ -146,3 +146,7 @@ dist
 data
 .aws-sam/
 .env
+
+CLAUDE.md
+.claude
+.wolf
