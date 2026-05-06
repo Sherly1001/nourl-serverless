@@ -46,6 +46,12 @@ async function routes(
     code: string,
     newCode: { code: string; url: string },
   ) => {
+    if (/[^a-zA-Z0-9\-_ ]/.test(code)) {
+      throw new Error(
+        "Code may only contain letters, numbers, spaces, - and _",
+      );
+    }
+
     const dbUrl = (await getUrls({ code }))?.[0] ?? null;
     if (dbUrl && dbUrl.owner) {
       throw new Error("not permission");
