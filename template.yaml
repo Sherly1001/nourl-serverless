@@ -93,5 +93,5 @@ Resources:
 Outputs:
   ApiGatewayDomainTarget:
     Condition: IsProdCondition
-    Description: !Sub "Add as Cloudflare CNAME target for ${DomainName} (orange cloud)"
-    Value: !GetAtt ApiGatewayDomainName.RegionalDomainName
+    Description: "Add as Cloudflare CNAME target (orange cloud)"
+    Value: !Sub "${ApiGatewayDomainName.RegionalDomainName} (CNAME target for ${DomainName})"
